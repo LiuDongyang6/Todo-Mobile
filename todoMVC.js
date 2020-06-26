@@ -17,11 +17,21 @@ function bindEvents() {
 
     $('search-btn').onclick = () => {
         $('keyword').innerHTML = $('search').value;
+        if ($('search').value) {
+            $('keyword').classList.add('using');
+        }
+        else {
+            $('keyword').classList.remove('using');
+        }
         $('search').value = '';
         currentFilterExps['search'] = (item) => { return item.content.indexOf($('keyword').innerHTML) != -1 };
         update();
     }
-    $('keyword').onclick = ()=>{$('keyword').innerHTML = '';update()};
+    $('keyword').onclick = () => {
+        $('keyword').innerHTML = '';
+        $('keyword').classList.remove('using');
+        update()
+    };
 
     $('editor-accept').onclick = onEditorAcceptClick;
     $('editor-cancel').onclick = onEditorCancleClick;
@@ -39,14 +49,13 @@ function bindEvents() {
     $('order').onclick = onOrderClick;
 }
 
-function onOrderClick(){
-    if($('order').order == 'down')
-    {
+function onOrderClick() {
+    if ($('order').order == 'down') {
         $('order').order = 'up';
         $('order').setAttribute('src', 'res/up.png');
         SortOrder = 1;
     }
-    else{
+    else {
         $('order').order = 'down';
         $('order').setAttribute('src', 'res/down.png');
         SortOrder = -1;
@@ -54,15 +63,14 @@ function onOrderClick(){
     update();
 }
 
-function onSortTypeClick(){
-    if($('sort-type').sortType == 'time')
-    {
+function onSortTypeClick() {
+    if ($('sort-type').sortType == 'time') {
         $('sort-type').sortType = 'name';
         $('sort-type').setAttribute('src', 'res/file.png');
         sortKey = 'name';
         update();
     }
-    else{
+    else {
         $('sort-type').sortType = 'time';
         $('sort-type').setAttribute('src', 'res/time.png');
         sortKey = 'time';
@@ -70,16 +78,15 @@ function onSortTypeClick(){
     }
 }
 
-function onStarFilterClick(e){
+function onStarFilterClick(e) {
     e.preventDefault();
     $('star-filter').classList.toggle('clicked');
     let clicked = $('star-filter').classList.contains('clicked');
-    if(clicked)
-    {
+    if (clicked) {
         $('star-filter').setAttribute('src', 'res/star_filled.png');
-        currentFilterExps['star'] = (item)=>{return item.star};
+        currentFilterExps['star'] = (item) => { return item.star };
     }
-    else{
+    else {
         $('star-filter').setAttribute('src', 'res/star_blue.png');
         currentFilterExps['star'] = null;
     }
@@ -168,18 +175,16 @@ function batchOperate(opt) {
     else flush();
 }
 
-let currentFilterExps={};
+let currentFilterExps = {};
 let SortOrder = 1;
 let sortKey = 'name';
 function update() {
     flush();
     $("card-container").innerHTML = '';
 
-    let exp = (item)=>{
-        for(let i in currentFilterExps)
-        {
-            if(currentFilterExps[i]&&!currentFilterExps[i](item))
-            {
+    let exp = (item) => {
+        for (let i in currentFilterExps) {
+            if (currentFilterExps[i] && !currentFilterExps[i](item)) {
                 return false;
             }
         }
@@ -192,7 +197,7 @@ function update() {
             sortFunc = (lhs, rhs) => { return (lhs.content > rhs.content ? 1 : -1) * SortOrder };
             break;
         case 'time':
-            sortFunc =  (lhs, rhs) => {
+            sortFunc = (lhs, rhs) => {
                 let time1 = new Date(lhs.createdTime).getTime();
                 let time2 = new Date(rhs.createdTime).getTime();
                 return (time1 > time2 ? 1 : -1) * SortOrder;
@@ -248,18 +253,17 @@ function createTodoCard(item) {
 
     let cardStar = document.createElement('img');
     cardStar.className = 'card-star';
-    let starFunc = ()=>{
-        cardStar.setAttribute('src', item.star?'res/star_filled.png':'res/star_blue.png');
-        if(item.star)
-        {
+    let starFunc = () => {
+        cardStar.setAttribute('src', item.star ? 'res/star_filled.png' : 'res/star_blue.png');
+        if (item.star) {
             cardStar.classList.add('stared');
         }
-        else{
+        else {
             cardStar.classList.remove('stared');
         }
     }
     starFunc();
-    cardStar.onclick = ()=>{
+    cardStar.onclick = () => {
         item.star = !item.star;
         starFunc();
         flush();
