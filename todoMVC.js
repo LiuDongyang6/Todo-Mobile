@@ -357,7 +357,10 @@ function createTodoCard(item) {
     let cardDelete = document.createElement("button");
     cardDelete.className = 'card-delete';
     cardDelete.innerHTML = "remove";
-    cardDelete.onclick = () => { deleteItem(item) };
+    cardDelete.onclick = () => { 
+        deleteItem(item) 
+        update();
+    };
     cardRow1.appendChild(cardDelete);
 
     let startX, startY, longTapTimer, moveX, moveY;
@@ -463,7 +466,7 @@ function createTodoCard(item) {
     smallDeleteButton.className = 'small-delete-button';
     smallDeleteButton.innerHTML = '删';
     smallDeleteButton.onclick = () => {
-        deleteItem(item)
+        deleteItem(item);
     };
     cardEditButtons.appendChild(smallDeleteButton);
     return card;

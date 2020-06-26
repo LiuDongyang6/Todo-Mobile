@@ -133,6 +133,7 @@ nav{
     right: -100%;
     top: 0;
     z-index: 20;
+    background-color: rgb(255, 163, 163);
 }
 
 #top-holder{
