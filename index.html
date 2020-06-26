@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ldy 1753575</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <link rel="stylesheet" href="todoMVC.css" type="text/css" />
+</head>
+
+<body>
+    <nav id="nav">
+        <div id="nav-row-1">
+            <div id="brand">Todos</div>
+        </div>
+        <div id="nav-row-2">
+            <ul id="filter-container">
+                <li id="all-filter">all</label>
+                <li id="active-filter">active</label>
+                <li id="completed-filter">completed</label>
+            </ul>
+        </div>
+        <div id="nav-row-3">
+            <div id="search-container">
+                <div id='keyword'></div>
+                <input type="text" id="search" placeholder="Search for...">
+                <button id='search-btn'>Search</button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="top-holder"></div>
+    <div id="main">
+        <div id="card-meta">
+            <div id="total-count-container">
+                <div id="advanced-filter">
+                    <img src="res/star_blue.png" id='star-filter' alt="">
+                    <img src="res/file.png" id='sort-type' alt="">
+                    <img src="res/up.png" id='order' alt="">
+                </div>
+                <div id="total-count"></div>
+            </div>
+            <div id="batch-operation-row">
+                <div id="select-all-wrapper">
+                    <input type="checkbox" id='select-all'>Select All</input>
+                </div>
+                <div id='batch-operation-container'>
+                    <img src="res/activate.png" alt="" id="active-batch">
+                    <img src="res/complete.png" alt="" id='complete-batch'>
+                    <img src="res/toggle.png" alt="" id='toggle-batch'>
+                    <img src="res/delete.png" alt="" id='delete-batch'>
+                </div>
+            </div>            
+        </div>
+
+        <div id="card-container"></div>
+
+        <div id="new-todo-wrapper">
+            <div id="ripple" class="ripple"></div>
+            <img id="new-todo" src="res/add.png" alt="ok-button" />
+            <div id="new-todo-bg"></div>
+        </div>
+    </div>
+
+    <div id="editor" class="hidden">
+        <div id="editor-dialog">
+            <div id="editor-head">editor-head</div>
+            <label for="editor-text" id='editor-label'>editor-label</label>
+            <input id="editor-text" type="text">
+            <div id="editor-buttons">
+                <button id="editor-accept">Accept</button>
+                <button id="editor-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script src="model.js"></script>
+    <script src="provider.js"></script>
+    <script src="todoMVC.js"></script>
+</body>
+
+</html>
