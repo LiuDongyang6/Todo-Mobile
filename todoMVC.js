@@ -292,15 +292,6 @@ function createTodoCard(item) {
             // editTodo(item);
             longTapTimer = null;
             editSingleTodo(card);
-            if (moveX + offsetX < -cardDelete.offsetWidth * 0.8) {
-                cardRow1.style.transform = 'translate(' + -cardDelete.offsetWidth + 'px, ' + 0 + 'px)';
-                cardRow1.style.opacity = (1 - Math.abs(moveX) / 300).toFixed(1);
-                offsetX = -cardDelete.offsetWidth;
-            } else {
-                cardRow1.style.transform = '';
-                cardRow1.style.opacity = '';
-                offsetX = 0;
-            }
         }, 500);
     });
 
@@ -339,7 +330,6 @@ function createTodoCard(item) {
             clearTimeout(longTapTimer);
             longTapTimer = null;
             selectCard(card);
-            return;
         }
         if (moveX + offsetX < -cardDelete.offsetWidth * 0.8) {
             cardRow1.style.transform = 'translate(' + -cardDelete.offsetWidth + 'px, ' + 0 + 'px)';

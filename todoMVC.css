@@ -133,6 +133,8 @@ nav{
     min-height: 80vh;
     font-size: 2rem;
     border: 2px solid #ced4da;
+    margin-bottom: 20px;
+    border-radius: 5px;
 }
 
 #card-meta{
