@@ -467,7 +467,7 @@ function onEditorAcceptClick() {
     if (text) {
         if ($('editor-head').innerHTML == 'Edit Todo' && $('editor-accept').editingCard) {
             $('editor-accept').editingCard.item.content = text;
-            $('editor-accept').editingCard.item.editTime = todayTime();
+            // $('editor-accept').editingCard.item.editTime = todayTime();
             $('editor-accept').editingCard = null;
         }
         else {
