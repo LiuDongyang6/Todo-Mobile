@@ -10,9 +10,11 @@ function start() {
 }
 
 function bindEvents() {
-    for (let btn of ['active-filter', 'completed-filter', 'all-filter']) {
+    for (let btn of ['active-filter', 'all-filter']) {
         $(btn).onclick = () => { onFilterButtonClick(btn) };
     }
+    bindDeleteComplete();
+
     $('new-todo-wrapper').onclick = onNewTodoClick;
 
     $('search-btn').onclick = () => {
@@ -142,10 +144,10 @@ function onFilterButtonClick(id) {
             };
             break;
     }
-    //todo
-    $('search').value = '';
-    $('star-filter').classList.remove('clicked');
-    $('star-filter').setAttribute('src', 'res/star_blue.png');
+
+    // $('search').value = '';
+    // $('star-filter').classList.remove('clicked');
+    // $('star-filter').setAttribute('src', 'res/star_blue.png');
     update();
 }
 
@@ -220,6 +222,82 @@ function update() {
 
 function flush() {
     window.model.flush();
+}
+
+function bindDeleteComplete(){
+    let startX, startY, longTapTimer, moveX, moveY;
+    let offsetX = 0;
+    let deleteCompleted = $('delete-completed');
+    let completedFilter = $('completed-filter');
+    let isClicked = true;
+    completedFilter.addEventListener('touchstart', function (e) {
+        e.preventDefault();
+        isClicked = true;
+        var touch = e.touches[0];
+        startX = touch.pageX;
+        startY = touch.pageY;
+        longTapTimer = setTimeout(function () {isClicked = false}, 500);
+    });
+
+    completedFilter.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+        if ($('card-container').classList.contains('batched')) {
+            return;
+        }
+        let touch = e.touches[0];
+        moveX = touch.pageX - startX;
+        moveY = touch.pageY - startY;
+        if (moveX + offsetX > 0) {
+            moveX = -offsetX;
+        } else if (moveX + offsetX < -deleteCompleted.offsetWidth) {
+            moveX = -deleteCompleted.offsetWidth - offsetX;
+        }
+
+        if ((Math.abs(moveX) > 5 || Math.abs(moveY) > 5)) {
+            isClicked = false;
+        }
+
+        if (Math.abs(moveY) < 20) {
+            completedFilter.style.transform = 'translate(' + (moveX + offsetX) + 'px, ' + 0 + 'px)';
+        }
+    });
+
+    completedFilter.addEventListener('touchend', function (e) {
+        e.preventDefault();
+        if (isClicked) {
+            clearTimeout(longTapTimer);
+            longTapTimer = null;
+            if(offsetX == 0)
+            {
+                onFilterButtonClick('completed-filter');
+            }
+            else{
+                clearCompleted();
+                offsetX = 0;
+                moveX = 0;
+            }
+        }
+        if (moveX + offsetX < -deleteCompleted.offsetWidth * 0.8) {
+            completedFilter.style.transform = 'translate(' + -deleteCompleted.offsetWidth + 'px, ' + 0 + 'px)';
+            offsetX = -deleteCompleted.offsetWidth;
+        } else {
+            // cardRow1.style.transform = 'translate(' + 0 + 'px, ' + 0 + 'px)';
+            completedFilter.style.transform = '';
+            offsetX = 0;
+        }
+    });
+}
+
+function clearCompleted(){
+    let completedItems = [];
+    for(let item of window.model.data.items){
+        if(item.completed)
+        {
+            completedItems.push(item);
+        }
+    }
+    completedItems.forEach(deleteItem);
+    update();
 }
 
 function createTodoCard(item) {
@@ -418,7 +496,6 @@ function deleteItem(item) {
     let items = window.model.data.items;
     let index = items.indexOf(item);
     items.splice(index, 1);
-    update();
 }
 
 function onNewTodoClick() {

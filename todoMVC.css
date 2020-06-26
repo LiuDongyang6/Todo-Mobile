@@ -57,6 +57,7 @@ nav{
     padding-right: 3%;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
+    height: 28px;
 }
 
 #search-container{
@@ -104,20 +105,34 @@ nav{
     width: 100%;
 }
 
-#filter-container li{
+#filter-container>div{
     width: 33.33%;
     border: 1px solid #ffffff;
-    list-style-type: none;
     text-align: center;
     position: relative;
     background-color: #86cfff;
     color: white;
+    overflow: hidden;
 }
 
 #filter-container .filtered
 {
     background-color: #0078ff;
     color:white;
+}
+
+#completed-filter{
+    position: relative;
+    /* transform: translateX(-100%); */
+}
+
+#delete-completed{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    right: -100%;
+    top: 0;
+    z-index: 20;
 }
 
 #top-holder{
