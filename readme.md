@@ -74,9 +74,9 @@
 
 
 
-### 按创建时间/Todo名称排序
+### 按创建时间/Todo名称/DDL排序
 
-页面默认按照Todo项目的名称排序，点击统计栏的图表可以切换为按照创建时间排序。
+页面默认按照Todo项目的名称排序，点击统计栏的图表可以切换为按照创建时间或按照DDL排序。
 
 <img src="./imgs/sort1.png" style="zoom:60%;" /><img src="./imgs/sort2.png" style="zoom:60%;" />
 
