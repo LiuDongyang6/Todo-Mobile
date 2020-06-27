@@ -102,6 +102,18 @@
 
 
 
+### DDL设置
+
+事项可以设置DDL
+
+<img src="./imgs/ddl1.png" style="zoom:60%;" />![](./imgs/ddl2.png)
+
+### 过期提醒
+
+已过期且未完成事项会有特殊提醒
+
+<img src="./imgs/delayed1.png" style="zoom:60%;" /><img src="./imgs/delayed2.png" style="zoom:60%;" />
+
 ### 删除已完成
 
 除了基本功能中介绍的方法外，页面还支持滑动上方的completed标签，亮出clear后清空所有已完成事项

@@ -6,6 +6,7 @@ window.addEventListener('load', start)
 function start() {
     window.model.init();
     bindEvents();
+    resetEditor();
     onFilterButtonClick('all-filter')
 }
 
@@ -67,6 +68,12 @@ function onOrderClick() {
 
 function onSortTypeClick() {
     if ($('sort-type').sortType == 'time') {
+        $('sort-type').sortType = 'ddl';
+        $('sort-type').setAttribute('src', 'res/calendar.png');
+        sortKey = 'ddl';
+        update();
+    }
+    else if ($('sort-type').sortType == 'ddl') {
         $('sort-type').sortType = 'name';
         $('sort-type').setAttribute('src', 'res/file.png');
         sortKey = 'name';
@@ -205,6 +212,14 @@ function update() {
                 return (time1 > time2 ? 1 : -1) * SortOrder;
             }
             break;
+        case 'ddl':
+            sortFunc = (lhs,rhs) => {
+                let ddl1 = htmlDateToArray(lhs.ddl);
+                let ddl2 = htmlDateToArray(rhs.ddl);
+                let time1 = new Date(ddl1[0],ddl1[1],ddl1[2]).getTime();
+                let time2 = new Date(ddl2[0],ddl2[1],ddl2[2]).getTime();
+                return (time1 > time2 ? 1 : -1) * SortOrder;
+            }
     }
     let items = window.model.data.items.slice(0);
     items.sort(sortFunc);
@@ -433,15 +448,22 @@ function createTodoCard(item) {
     card.appendChild(cardRow2);
 
     let createdTime = document.createElement('div')
-    createdTime.innerHTML = 'Create : ' + Date2Str(item.createdTime);
+    createdTime.innerHTML = '<div class="info-head">Created</div><div class="info-content">' + Date2Str(item.createdTime) + '</div>';
+    createdTime.classList.add('card-info');
     cardRow2.appendChild(createdTime);
 
-    // if(item.editTime)
-    // {
-    //     let modifiedTime = document.createElement('div')
-    //     modifiedTime.innerHTML = 'Modify: ' + item.editTime;
-    //     cardRow2.appendChild(modifiedTime);
-    // }
+    if(item.ddl)
+    {
+        let ddlRow = document.createElement('div')
+        ddlRow.innerHTML = 'DDL: ' + item.ddl;
+        ddlRow.innerHTML = '<div class="info-head">DDL</div><div class="info-content">' + item.ddl + '</div>';
+        ddlRow.classList.add('card-info');
+        if(isHtmlDataPast(htmlDateToArray(item.ddl)))
+        {
+            card.classList.add('delayed');
+        }
+        cardRow2.appendChild(ddlRow);
+    }
 
     let activeButton = document.createElement('button');
     activeButton.classList.add('active-button');
@@ -454,21 +476,6 @@ function createTodoCard(item) {
     }
     cardRow2.appendChild(activeButton);
 
-    let cardEditButtons = document.createElement('div');
-    cardEditButtons.className = 'edit-button-container';
-    // cardRow2.appendChild(cardEditButtons);
-
-    let smallModifyButton = document.createElement('button');
-    smallModifyButton.className = 'small-modify-button style3';
-    smallModifyButton.innerHTML = '改';
-    cardEditButtons.appendChild(smallModifyButton);
-    let smallDeleteButton = document.createElement('button');
-    smallDeleteButton.className = 'small-delete-button';
-    smallDeleteButton.innerHTML = '删';
-    smallDeleteButton.onclick = () => {
-        deleteItem(item);
-    };
-    cardEditButtons.appendChild(smallDeleteButton);
     return card;
 }
 
@@ -476,6 +483,9 @@ function editSingleTodo(card) {
     $('editor-head').innerHTML = 'Edit Todo';
     $('editor-label').innerHTML = 'Write new todo info here';
     $('editor-text').value = card.item.content;
+    if(card.item.ddl){
+        $('ddl').value = card.item.ddl;
+    }
     $('editor-accept').editingCard = card;
     showEditor();
 }
@@ -518,6 +528,51 @@ function showEditor() {
     $("editor-text").focus();
 }
 
+function onEditorAcceptClick() {
+    let text = $('editor-text').value;
+    if (text) {
+        if ($('editor-head').innerHTML == 'Edit Todo' && $('editor-accept').editingCard) {
+            $('editor-accept').editingCard.item.content = text;
+            $('editor-accept').editingCard.item.ddl = $('ddl').value;
+            // $('editor-accept').editingCard.item.editTime = todayTime();
+            $('editor-accept').editingCard = null;
+        }
+        else {
+            let item = {
+                content: text,
+                completed: false,
+                createdTime: new Date().toString(),
+                editTime: '',
+                star: false,
+                ddl: $('ddl').value
+            }
+            window.model.data.items.push(item);
+        }
+        $("new-todo-wrapper").classList.remove("hidden");
+        $("editor").classList.add("hidden");
+        resetEditor();
+        update();
+    }
+}
+
+function onEditorCancleClick() {
+    $("editor").classList.add("hidden");
+    $('editor-text').value = '';
+    $("new-todo-wrapper").classList.remove("hidden");
+    resetEditor();
+}
+
+function resetEditor()
+{
+    //reset value
+    $('editor-text').value = '';
+    //reset ddl
+    let today = new Date();
+    let month = (today.getMonth()+1) < 10 ? '0' + (today.getMonth()+1) : (today.getMonth()+1) + '';
+    let day = today.getDate() < 10 ? '0' + today.getDate() : today.getDate() + '';
+    $('ddl').value = today.getFullYear() + '-' + month + '-' + day;
+}
+
 function Date2Str(date_) {
     let date = new Date(date_);
     var curYear = date.getFullYear();
@@ -542,33 +597,18 @@ function Date2Str(date_) {
     return curtime;
 }
 
-function onEditorAcceptClick() {
-    let text = $('editor-text').value;
-    if (text) {
-        if ($('editor-head').innerHTML == 'Edit Todo' && $('editor-accept').editingCard) {
-            $('editor-accept').editingCard.item.content = text;
-            // $('editor-accept').editingCard.item.editTime = todayTime();
-            $('editor-accept').editingCard = null;
-        }
-        else {
-            let item = {
-                content: text,
-                completed: false,
-                createdTime: new Date().toString(),
-                editTime: '',
-                star: false
-            }
-            window.model.data.items.push(item);
-        }
-        $("new-todo-wrapper").classList.remove("hidden");
-        $("editor").classList.add("hidden");
-        $('editor-text').value = '';
-        update();
-    }
+function htmlDateToArray(date)
+{
+    return [parseInt(date.split('-')[0]), parseInt(date.split('-')[1]), parseInt(date.split('-')[2])];
 }
 
-function onEditorCancleClick() {
-    $("editor").classList.add("hidden");
-    $('editor-text').value = '';
-    $("new-todo-wrapper").classList.remove("hidden");
+function isHtmlDataPast(dateArray){
+    let givenDate = new Date(dateArray[0], dateArray[1], dateArray[2], 0, 0, 0);
+    if (givenDate.getTime() > Date.now()){
+        return false;
+    }
+    else{
+        return true;
+    }
+    
 }
